@@ -2,12 +2,17 @@ import {GoogleSpreadsheet} from 'google-spreadsheet'
 
 const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID)
 
+const fromBase64 = value =>{
+    const buff = Buffer.from(value, "base64")
+    return buff.toString('ascii')
+}
+
 export default async (req, res) => {
 
     try{
         await doc.useServiceAccountAuth({
             client_email: process.env.GOOGLE_SHEET_CLIENT_EMAIL,
-            private_key: process.env.GOOGLE_SHEET_PRIVATE_KEY
+            private_key: fromBase64(process.env.GOOGLE_SHEET_PRIVATE_KEY)
         })
         await doc.loadInfo()
         const sheet = doc.sheetsByIndex[2]
